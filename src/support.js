@@ -544,15 +544,15 @@ Module['registerFunctions'] = registerFunctions;
 #endif // RELOCATABLE
 #endif // EMULATED_FUNCTION_POINTERS
 
-#if WASM_BACKEND_WITH_RESERVED_FUNCTION_POINTERS
+#if WASM_BACKEND && RESERVED_FUNCTION_POINTERS
 var jsCallStartIndex = {{{ JSCALL_START_INDEX }}};
 var jsCallSigOrder = {{{ JSON.stringify(JSCALL_SIG_ORDER) }}};
 var jsCallNumSigs = Object.keys(jsCallSigOrder).length;
 var functionPointers = new Array(jsCallNumSigs * {{{ RESERVED_FUNCTION_POINTERS }}});
-#else // WASM_BACKEND_WITH_RESERVED_FUNCTION_POINTERS == 0
+#else
 var jsCallStartIndex = 1;
 var functionPointers = new Array({{{ RESERVED_FUNCTION_POINTERS }}});
-#endif // WASM_BACKEND_WITH_RESERVED_FUNCTION_POINTERS
+#endif
 
 // 'sig' parameter is only used on LLVM wasm backend
 function addFunction(func, sig) {
@@ -567,11 +567,11 @@ function addFunction(func, sig) {
   }
 #endif // ASSERTIONS
 #if EMULATED_FUNCTION_POINTERS == 0
-#if WASM_BACKEND_WITH_RESERVED_FUNCTION_POINTERS
+#if WASM_BACKEND && RESERVED_FUNCTION_POINTERS
   var base = jsCallSigOrder[sig] * {{{ RESERVED_FUNCTION_POINTERS }}};
-#else // WASM_BACKEND_WITH_RESERVED_FUNCTION_POINTERS == 0
+#else
   var base = 0;
-#endif // WASM_BACKEND_WITH_RESERVED_FUNCTION_POINTERS
+#endif
   for (var i = base; i < base + {{{ RESERVED_FUNCTION_POINTERS }}}; i++) {
     if (!functionPointers[i]) {
       functionPointers[i] = func;
